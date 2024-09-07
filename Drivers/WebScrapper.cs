@@ -38,6 +38,7 @@ public class WebScrapper : Web
     {
         var dataTableParams = new ParamsDataTable("Data", "C:/", new List<DataTables> { new DataTables(sheetName, data) });
 
+        // If you not have Excel in your PC maybe you'll get an exception here
         Base.GenerateExcel(dataTableParams);
     }
 }
