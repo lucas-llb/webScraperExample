@@ -46,5 +46,7 @@ public class WebScrapper
 
         // Check file in .\bin\Debug\net8.0
         File.WriteAllText("items.csv", file.ToString());
+
+        _driver.Close();
     }
 }
