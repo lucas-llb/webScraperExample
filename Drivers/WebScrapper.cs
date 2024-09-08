@@ -1,27 +1,27 @@
-﻿using EasyAutomationFramework;
-using EasyAutomationFramework.Model;
-using OpenQA.Selenium;
-using System.Data;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System.Text;
 using WebScraper.Models;
 
 namespace WebScraper.Drivers;
 
-public class WebScrapper : Web
+public class WebScrapper
 {
-    public DataTable GetData(string url)
-    {
-        if(driver == null)
-        {
-            StartBrowser();
-        }
+    private IWebDriver _driver;
 
+    public WebScrapper()
+    {
+        _driver = new ChromeDriver();
+    }
+    public IEnumerable<Item> GetData(string url)
+    {
         var items = new List<Item>();
 
-        Navigate(url);
+        _driver.Navigate().GoToUrl(url);
 
-        var elements = GetValue(TypeElement.Xpath, "/html/body/div[1]/div[3]/div/div[2]/div[1]").element.FindElements(By.ClassName("thumbnail"));
+        var cardElement = _driver.FindElement(By.XPath("/html/body/div[1]/div[3]/div/div[2]/div[1]")).FindElements(By.ClassName("thumbnail"));
 
-        foreach(var element in elements)
+        foreach (var element in cardElement)
         {
             var item = new Item();
             item.Title = element.FindElement(By.ClassName("title")).GetAttribute("title");
@@ -31,14 +31,20 @@ public class WebScrapper : Web
             items.Add(item);
         }
 
-        return Base.ConvertTo(items);
+        return items;
     }
 
-    public void CreateExcelFile(DataTable data, string sheetName)
+    public void CreateCsvFile(IEnumerable<Item> items)
     {
-        var dataTableParams = new ParamsDataTable("Data", "C:/", new List<DataTables> { new DataTables(sheetName, data) });
+        var file = new StringBuilder();
+        file.Append("Name;Description;Price");
 
-        // If you not have Excel in your PC maybe you'll get an exception here
-        Base.GenerateExcel(dataTableParams);
+        foreach (var item in items)
+        {
+            file.AppendLine($"{item.Title};{item.Description};{item.Price}");
+        }
+
+        // Check file in .\bin\Debug\net8.0
+        File.WriteAllText("items.csv", file.ToString());
     }
 }
