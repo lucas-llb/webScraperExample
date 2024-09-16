@@ -32,7 +32,7 @@ public class WebScrapperPlayWright
             items.Add(item);
         }
 
-        browser.CloseAsync();
+        await browser.CloseAsync();
 
         return items;
     }
