@@ -37,7 +37,7 @@ public class WebScrapper
     public void CreateCsvFile(IEnumerable<Item> items)
     {
         var file = new StringBuilder();
-        file.Append("Name;Description;Price");
+        file.AppendLine("Name;Description;Price");
 
         foreach (var item in items)
         {
